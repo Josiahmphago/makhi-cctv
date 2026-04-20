@@ -1,0 +1,36 @@
+{
+  "emergency_contacts": {
+    "contact1": {
+      "name": "Police Station",
+      "phoneNumber": "10111"
+    },
+    "contact2": {
+      "name": "Ambulance",
+      "phoneNumber": "10177"
+    }
+  },
+  "panic_settings": {
+    "default_user": {
+      "defaultMessage": "Help! I’m in danger.",
+      "contacts": ["10111", "10177"],
+      "silent": false,
+      "autoPhoto": false
+    }
+  },
+  "patrol_teams": {
+    "zoneA": {
+      "name": "Zone A",
+      "members": ["Patrol1", "Patrol2"]
+    }
+  },
+  "cctv_cameras": {
+    "cam_street1": {
+      "name": "Street Camera 1",
+      "location": {
+        "latitude": -25.748,
+        "longitude": 28.229
+      },
+      "online": true
+    }
+  }
+}

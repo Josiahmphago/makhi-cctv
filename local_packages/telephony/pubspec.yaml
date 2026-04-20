@@ -1,0 +1,14 @@
+name: telephony
+description: Local override of telephony plugin to send SMS natively
+version: 0.0.1
+homepage: https://github.com/shounakmulay/telephony
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.shounakmulay.telephony
+        pluginClass: TelephonyPlugin
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"

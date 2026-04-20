@@ -1,0 +1,159 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -----------------------------
+    // Utility functions
+    // -----------------------------
+    function isSignedIn() { return request.auth != null; }
+    function uid()        { return request.auth.uid; }
+
+    // Safe get user doc (avoid hard failures if doc missing)
+    function myUserDoc() {
+      return get(/databases/$(database)/documents/users/$(uid()));
+    }
+
+    function hasRole(r) {
+      return isSignedIn()
+        && myUserDoc().data.roles != null
+        && myUserDoc().data.roles[r] == true;
+    }
+
+    // -----------------------------
+    // USERS (✅ FIX: add user rules)
+    // -----------------------------
+    match /users/{userId} {
+      // Needed so app can read other users like 'user_officer_mabaso' during recipient building.
+      // Later we can tighten this to role-based reads only.
+      allow read: if isSignedIn();
+
+      // Each user can create/update their own profile
+      allow create, update: if isSignedIn() && userId == uid();
+
+      // optional: no deletes in production
+      allow delete: if false;
+    }
+
+    // -----------------------------
+    // CONTACT GROUPS / CONTACTS
+    // -----------------------------
+    match /contact_groups/{groupId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /emergency_contacts/{contactId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /saved_messages/{messageId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // Admin-managed alert groups (used by AlertRecipientDirectory)
+    match /alert_groups/{groupId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if hasRole('admin');
+    }
+
+    // -----------------------------
+    // POLICE (stations + shifts)
+    // -----------------------------
+    match /police_stations/{stationId} {
+      allow read: if isSignedIn();
+      allow write: if hasRole('admin');
+    }
+
+    // You referenced station_shifts in code (and police_shifts in rules).
+    // Allow both so nothing breaks.
+    match /station_shifts/{shiftId} {
+      allow read: if isSignedIn();
+      allow write: if hasRole('admin');
+    }
+
+    match /police_shifts/{shiftId} {
+      allow read: if isSignedIn();
+      allow write: if hasRole('admin');
+    }
+
+    // -----------------------------
+    // PATROL (teams + shifts)
+    // -----------------------------
+    match /patrol_teams/{teamId} {
+      allow read: if isSignedIn();
+      allow write: if hasRole('admin') || hasRole('patrol');
+    }
+
+    match /patrol_shifts/{shiftId} {
+      allow read: if isSignedIn();
+      allow write: if hasRole('admin') || hasRole('patrol');
+    }
+
+    // -----------------------------
+    // CCTV cameras
+    // -----------------------------
+    match /cctv_cameras/{cameraId} {
+      allow read: if isSignedIn();
+      allow write: if hasRole('admin');
+    }
+
+    // -----------------------------
+    // ALERTS
+    // -----------------------------
+    match /alerts/{alertId} {
+      allow create: if isSignedIn();
+      allow read: if isSignedIn();
+
+      // only patrol, escort, towing, or admin can update/resolve
+      allow update: if isSignedIn() && (
+        hasRole('patrol') || hasRole('escort') || hasRole('towing') || hasRole('admin')
+      );
+
+      allow delete: if hasRole('admin');
+    }
+
+    // -----------------------------
+    // ESCORT REQUESTS
+    // -----------------------------
+    match /escort_requests/{requestId} {
+      allow create: if isSignedIn();
+      allow read: if isSignedIn();
+
+      allow update: if isSignedIn() && (hasRole('escort') || hasRole('admin'));
+      allow delete: if hasRole('admin');
+
+      // If you use responders subcollection:
+      match /responders/{responderId} {
+        allow read: if isSignedIn();
+        allow create, update: if isSignedIn() && (hasRole('escort') || hasRole('admin'));
+        allow delete: if hasRole('admin');
+      }
+    }
+
+    // -----------------------------
+    // TOW REQUESTS
+    // -----------------------------
+    match /tow_requests/{requestId} {
+      allow create: if isSignedIn();
+      allow read: if isSignedIn();
+
+      allow update: if isSignedIn() && (hasRole('towing') || hasRole('admin'));
+      allow delete: if hasRole('admin');
+    }
+
+    // -----------------------------
+    // PANIC SETTINGS (per-user)
+    // -----------------------------
+    match /panic_settings/{userId} {
+      allow read, write: if isSignedIn() && uid() == userId;
+      allow delete: if false;
+    }
+
+    // -----------------------------
+    // Default deny
+    // -----------------------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "ozow": {
+    "site": "SITE_CODE"
+  },
+  "reloadly": {
+    "id": "RELOADLY_CLIENT_ID",
+    "secret": "RELOADLY_CLIENT_SECRET"
+  },
+  "env": {
+    "success_url": "http://localhost:5177/success",
+    "cancel_url": "http://localhost:5177/cancel",
+    "webhook_url": "http://127.0.0.1:5001/YOUR_PROJECT_ID/us-central1/paymentWebhook/payments/webhook",
+    "mock_payments": "1"
+  }
+}
