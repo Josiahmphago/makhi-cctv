@@ -1,29 +1,30 @@
-# Miscellaneous
+# ===============================
+# 🔧 SYSTEM / MISC
+# ===============================
 *.class
 *.log
 *.pyc
 *.swp
 .DS_Store
+.history
+.svn/
 .atom/
 .build/
 .buildlog/
-.history
-.svn/
-.swiftpm/
 migrate_working_dir/
 
-# IntelliJ related
+# ===============================
+# 🧠 IDE
+# ===============================
 *.iml
 *.ipr
 *.iws
 .idea/
+.vscode/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
+# ===============================
+# 🚀 FLUTTER / DART
+# ===============================
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -33,29 +34,58 @@ migrate_working_dir/
 .pub/
 /build/
 
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
-
-# 🔐 Secrets
+# ===============================
+# 🔐 ENV / SECRETS
+# ===============================
 .env
-.env.local
+.env.*
+*.env
 
-# 🔥 Firebase
+# Patrol app envs (IMPORTANT)
+patrol-app/.env
+patrol-app/.env.*
+
+# ===============================
+# 🔥 FIREBASE
+# ===============================
 android/app/google-services.json
+firebase-debug.log
+firestore-debug.log
 
-# 📦 Node
+# ===============================
+# 📦 NODE / WEB
+# ===============================
 node_modules/
+patrol-app/node_modules/
 
-# 🧪 Temp
+# ===============================
+# 🧪 TEMP FILES
+# ===============================
 .tmp/
+*.tmp
 
-# 🏗️ Build
+# ===============================
+# 🏗️ BUILD OUTPUTS
+# ===============================
 build/
+dist/
+coverage/
+
+# ===============================
+# 📱 ANDROID / IOS
+# ===============================
+android/.gradle/
+android/local.properties
+ios/Pods/
+ios/.symlinks/
+
+# ===============================
+# 🔒 KEYSTORE / SIGNING
+# ===============================
+*.jks
+*.keystore
+
+# ===============================
+# 📊 OPTIONAL (SAFE TO KEEP OUT)
+# ===============================
+*.lock
